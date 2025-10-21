@@ -1,1 +1,1 @@
-wed: gunicorn cellano_restaurante_db.wsgi
+gunicorn cellano_restaurante_db.wsgi:application

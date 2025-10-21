@@ -1,0 +1,16 @@
+distlib==0.3.7
+filelock==3.13.1
+platformdirs==4.1.0
+python-dotenv==1.0.1
+virtualenv==20.25.0
+gunicorn==20.1.0
+django-filter==22.1
+django-jazzmin==2.6.0
+django-rest-auth==0.9.5
+django-storages==1.13.1
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
+psycopg2==2.9.5
+django-cors-headers==4.3.1
+APScheduler==3.10.1
+

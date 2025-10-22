@@ -1,6 +1,7 @@
 from django.urls import path
 from AlmuerzoCheck.views import login_views
 from AlmuerzoCheck.views import acudiente
+from AlmuerzoCheck.views import estudiantes
 
 
 urlpatterns = [
@@ -24,7 +25,8 @@ urlpatterns = [
     path('usuarios/borrar_acudiente/<int:pk>/', acudiente.BorrarAcudienteVista.as_view(), name='borrar-acudiente'),
 
 
+    path('usuarios/crear_estudiante/', estudiantes.CrearEstudianteVista.as_view(), name='crear-estudiante'),
+    path('usuarios/listar_estudiantes/', estudiantes.ListarEstudiantesVista.as_view(), name='listar-estudiantes'),
 
-    
 ]
  

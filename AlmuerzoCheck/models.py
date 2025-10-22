@@ -127,7 +127,11 @@ class T007UsuariosSistema(AbstractBaseUser, PermissionsMixin):
     creado_en = models.DateTimeField(default=timezone.now, verbose_name="T007_creado_en")
     correo_electronico = models.EmailField(null=True, blank=True, verbose_name="T007_correo_electrónico")
     
-   
+# 🌟 CAMPOS FALTANTES 🌟
+    # Para guardar el código de 4 dígitos. Debe ser nullable.
+    codigo_recuperacion = models.CharField(max_length=4, null=True, blank=True, verbose_name="T007_codigo_recuperacion") 
+    # Para guardar la fecha de expiración. Debe ser nullable.
+    codigo_expira = models.DateTimeField(null=True, blank=True, verbose_name="T007_codigo_expira")  
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = [ "password", "correo_electronico" ]

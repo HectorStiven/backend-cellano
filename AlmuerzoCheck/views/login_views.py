@@ -239,44 +239,44 @@ class ActualizarPasswordUsuario(generics.GenericAPIView):
 
 
 
-class EnviarCorreoElectronico(generics.CreateAPIView):
-    def post(self, request, *args, **kwargs):
-        correo = request.data.get('correo')
-        nombre = request.data.get('nombre')
-        subject = request.data.get('asunto')
-        mensaje = request.data.get('mensaje')
+# class EnviarCorreoElectronico(generics.CreateAPIView):
+#     def post(self, request, *args, **kwargs):
+#         correo = request.data.get('correo')
+#         nombre = request.data.get('nombre')
+#         subject = request.data.get('asunto')
+#         mensaje = request.data.get('mensaje')
 
-        if correo and nombre and subject:
-            # Configuración del correo electrónico
-            template = "alerta.html"
+#         if correo and nombre and subject:
+#             # Configuración del correo electrónico
+#             template = "alerta.html"
             
-            # Crear el contexto para la plantilla
-            context = {
-                'nombre': nombre,
-                'mensaje': mensaje
-            }
+#             # Crear el contexto para la plantilla
+#             context = {
+#                 'nombre': nombre,
+#                 'mensaje': mensaje
+#             }
 
-            # Renderizar la plantilla
-            html_content = render_to_string(template, context)
+#             # Renderizar la plantilla
+#             html_content = render_to_string(template, context)
 
-            # Configuración del correo electrónico en formato HTML
-            email = EmailMessage()
-            email.subject = subject
-            email.body = html_content
-            email.to = [correo]
-            email.content_subtype = 'html'
+#             # Configuración del correo electrónico en formato HTML
+#             email = EmailMessage()
+#             email.subject = subject
+#             email.body = html_content
+#             email.to = [correo]
+#             email.content_subtype = 'html'
 
-            try:
-                # Enviar el correo electrónico
-                email.fail_silently=False
-                email.send()
-                return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
-            except Exception as e:
-                # Maneja cualquier error al enviar el correo
-                return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            # Maneja el caso en el que no se proporciona el correo, el nombre o el asunto
-            return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)  
+#             try:
+#                 # Enviar el correo electrónico
+#                 email.fail_silently=False
+#                 email.send()
+#                 return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
+#             except Exception as e:
+#                 # Maneja cualquier error al enviar el correo
+#                 return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         else:
+#             # Maneja el caso en el que no se proporciona el correo, el nombre o el asunto
+#             return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)  
         
 
 
@@ -284,27 +284,27 @@ class EnviarCorreoElectronico(generics.CreateAPIView):
 
 
 
-# class EnviarCorreoElectronico(generics.CreateAPIView):
-#     def post(self, request, *args, **kwargs):
-#         correo = request.data.get('correo')
-#         nombre = request.data.get('nombre')
-#         subject = request.data.get('asunto')
+class EnviarCorreoElectronico(generics.CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        correo = request.data.get('correo')
+        nombre = request.data.get('nombre')
+        subject = request.data.get('asunto')
 
-#         if correo and nombre and subject:
-#             # Solo enviamos un saludo simple
-#             mensaje = f"Hola {nombre},\n\n¡Te saludo cordialmente!"
+        if correo and nombre and subject:
+            # Solo enviamos un saludo simple
+            mensaje = f"Hola {nombre},\n\n¡Te saludo cordialmente!"
             
-#             email = EmailMessage(
-#                 subject=subject,
-#                 body=mensaje,
-#                 to=[correo]
-#             )
+            email = EmailMessage(
+                subject=subject,
+                body=mensaje,
+                to=[correo]
+            )
             
-#             try:
-#                 email.fail_silently = False
-#                 email.send()
-#                 return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
-#             except Exception as e:
-#                 return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-#         else:
-#             return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                email.fail_silently = False
+                email.send()
+                return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)

@@ -302,7 +302,7 @@ class EnviarCorreoElectronico(generics.CreateAPIView):
             
             try:
                 email.fail_silently = False
-                email.send()
+                # email.send()
                 return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

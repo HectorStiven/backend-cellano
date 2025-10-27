@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from AlmuerzoCheck.models import T001Estudiantes # Asegúrate de que esta importación sea correcta
 from AlmuerzoCheck.serializer.Estudiantes_Serializer import EstudianteSerializer # Importa tu nuevo serializador
+from rest_framework.permissions import IsAuthenticated  
 
 
 
@@ -12,6 +13,7 @@ class CrearEstudianteVista(generics.CreateAPIView):
 
     queryset = T001Estudiantes.objects.all()
     serializer_class = EstudianteSerializer
+    permission_classes = [IsAuthenticated]  # Asegúrate de que se requiera autenticación
 
     def create(self, request, *args, **kwargs):
         try:
@@ -56,6 +58,7 @@ class ListarEstudiantesVista(generics.ListAPIView):
     # Define todos los objetos que pueden ser listados (Estudiantes activos)
     queryset = T001Estudiantes.objects.filter(estado=True)
     serializer_class = EstudianteSerializer
+
 
     def get(self, request, *args, **kwargs):
         try:

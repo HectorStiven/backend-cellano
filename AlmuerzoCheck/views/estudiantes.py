@@ -58,6 +58,7 @@ class ListarEstudiantesVista(generics.ListAPIView):
     # Define todos los objetos que pueden ser listados (Estudiantes activos)
     queryset = T001Estudiantes.objects.filter(estado=True)
     serializer_class = EstudianteSerializer
+    permission_classes = [IsAuthenticated]  # Asegúrate de que se requiera autenticación
 
 
     def get(self, request, *args, **kwargs):

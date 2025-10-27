@@ -280,31 +280,34 @@ class ActualizarPasswordUsuario(generics.GenericAPIView):
         
 
 
+from threading import Thread
+from rest_framework.views import APIView
 
+def enviar_correo_smtp(correo, nombre, subject):
+    """
+    Función que envía el correo de forma lenta (SMTP).
+    Se ejecuta en segundo plano para no bloquear la petición HTTP.
+    """
+    mensaje = f"Hola {nombre},\n\n¡Te saludo cordialmente!"
+    email = EmailMessage(subject=subject, body=mensaje, to=[correo])
+    email.fail_silently = False
+    try:
+        email.send()
+    except Exception as e:
+        # Aquí puedes loguear el error
+        print(f"Error al enviar correo: {str(e)}")
 
-
-
-class EnviarCorreoElectronico(generics.CreateAPIView):
-    def post(self, request, *args, **kwargs):
+class EnviarCorreoElectronico(APIView):
+    def post(self, request):
         correo = request.data.get('correo')
         nombre = request.data.get('nombre')
         subject = request.data.get('asunto')
 
-        if correo and nombre and subject:
-            # Solo enviamos un saludo simple
-            mensaje = f"Hola {nombre},\n\n¡Te saludo cordialmente!"
-            
-            email = EmailMessage(
-                subject=subject,
-                body=mensaje,
-                to=[correo]
-            )
-            
-            try:
-                email.fail_silently = False
-                # email.send()
-                return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not (correo and nombre and subject):
+            return Response({'error': 'Faltan datos'}, status=400)
+
+        # Ejecuta en segundo plano
+        Thread(target=enviar_correo_smtp, args=(correo, nombre, subject)).start()
+
+        # Devuelve respuesta inmediata
+        return Response({'mensaje': 'Correo programado para envío'}, status=200)

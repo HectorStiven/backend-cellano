@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-2#-(&3vdm2h=fmw^3+(&_pktzmal1me0kkzv!9$aaopjtc#w&t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -177,3 +177,10 @@ CORS_ALLOWED_ORIGIN = ['*']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'AlmuerzoCheck.T007UsuariosSistema'
+
+
+# Carpeta donde se guardan los archivos subidos
+MEDIA_ROOT = BASE_DIR / "media"
+
+# URL para acceder a esos archivos
+MEDIA_URL = "/media/"

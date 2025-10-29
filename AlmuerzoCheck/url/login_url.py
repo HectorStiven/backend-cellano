@@ -3,7 +3,7 @@ from AlmuerzoCheck.views import login_views
 from AlmuerzoCheck.views import acudiente
 from AlmuerzoCheck.views import estudiantes
 from AlmuerzoCheck.views import menu
-
+from AlmuerzoCheck.views import WedcamId
 
 urlpatterns = [
     path('usuarios/', login_views.ListarUsuario.as_view(), name='listar-usuarios'),
@@ -34,5 +34,6 @@ urlpatterns = [
    path('menu/eliminar/<int:pk>/', menu.EliminarMenuVista.as_view(), name='eliminar-menu'),
 
 
+
+  path('wedcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
 ]
- 

@@ -31,6 +31,7 @@ class T001Estudiantes(models.Model):
     estado = models.BooleanField(default=True, verbose_name="T001_estado")
     creditos = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="T001_créditos")
     creado_en = models.DateTimeField(default=timezone.now, verbose_name="T001_creado_en")
+    fotoId = models.ImageField(upload_to='fotos_estudiantes/', null=True, blank=True, verbose_name="T001_fotoId")
 
     class Meta:
         verbose_name = "Estudiante"

@@ -35,5 +35,5 @@ urlpatterns = [
 
 
 
-  # path('wedcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
+  # path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
 ]

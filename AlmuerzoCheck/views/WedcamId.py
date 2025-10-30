@@ -7,6 +7,7 @@
 # import numpy as np
 # import os
 
+
 # class WedCamService(generics.GenericAPIView):
 #     permission_classes = [AllowAny]
 

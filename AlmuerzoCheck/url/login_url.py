@@ -28,7 +28,8 @@ urlpatterns = [
 
     path('usuarios/crear_estudiante/', estudiantes.CrearEstudianteVista.as_view(), name='crear-estudiante'),
     path('usuarios/listar_estudiantes/', estudiantes.ListarEstudiantesVista.as_view(), name='listar-estudiantes'),
-
+    path('usuarios/obtener_estudiante/<int:pk>/', estudiantes.ObtenerEstudianteInfo.as_view(), name='obtener-estudiante-info'),
+    
    path('menu/crear/', menu.CrearMenuVista.as_view(), name='crear-menu'),
    path('menu/listar/', menu.ListarMenuVista.as_view(), name='listar-menu'),
    path('menu/eliminar/<int:pk>/', menu.EliminarMenuVista.as_view(), name='eliminar-menu'),

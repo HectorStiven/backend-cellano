@@ -2,7 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from AlmuerzoCheck.models import T001Estudiantes
-from AlmuerzoCheck.serializer.Estudiantes_Serializer import EstudianteSerializer
+from AlmuerzoCheck.serializer.Estudiantes_Serializer import EstudianteSerializer ,EstudianteAllSerializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -43,7 +43,7 @@ class ListarEstudiantesVista(generics.ListAPIView):
     Acepta peticiones GET.
     """
     queryset = T001Estudiantes.objects.all()  # Trae todos los estudiantes
-    serializer_class = EstudianteSerializer
+    serializer_class = EstudianteAllSerializer
     permission_classes = [IsAuthenticated]  
 
     def get(self, request, *args, **kwargs):
@@ -69,5 +69,49 @@ class ListarEstudiantesVista(generics.ListAPIView):
             return Response({
                 "success": False,
                 "detail": "Ocurrió un error al obtener la lista de estudiantes",
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class ObtenerEstudianteInfo(generics.RetrieveAPIView):
+    """
+    Vista para obtener la información de un estudiante por su ID.
+    Acepta peticiones GET con el ID del estudiante en la URL.
+    Ejemplo: /api/estudiantes/5/
+    """
+    queryset = T001Estudiantes.objects.all()
+    serializer_class = EstudianteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            estudiante_id = kwargs.get('pk')  # Captura el ID desde la URL
+
+            if not estudiante_id:
+                return Response({
+                    "success": False,
+                    "detail": "Debe proporcionar el ID del estudiante en la URL."
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                estudiante = self.get_queryset().get(pk=estudiante_id)
+            except T001Estudiantes.DoesNotExist:
+                return Response({
+                    "success": False,
+                    "detail": f"No se encontró ningún estudiante con ID {estudiante_id}."
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = self.get_serializer(estudiante)
+            return Response({
+                "success": True,
+                "detail": "Estudiante encontrado correctamente",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                "success": False,
+                "detail": "Ocurrió un error interno al obtener la información del estudiante",
                 "error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

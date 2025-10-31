@@ -65,6 +65,7 @@ class T003MenuDia(models.Model):
     bebida = models.CharField(max_length=100, verbose_name="T003_bebida")
     postre = models.CharField(max_length=100, verbose_name="T003_postre")
     calorias_total = models.IntegerField(verbose_name="T003_calorías_total")
+    fotoId = models.ImageField(upload_to='menu/', null=True, blank=True, verbose_name="T003_fotoId")
 
     class Meta:
         verbose_name = "Menú del Día"
@@ -80,9 +81,7 @@ class T004Consumos(models.Model):
     menu = models.ForeignKey(T003MenuDia, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="T004_menú")
     fecha = models.DateField(default=timezone.now, verbose_name="T004_fecha")
     hora = models.TimeField(default=timezone.now, verbose_name="T004_hora")
-    repetido = models.BooleanField(default=False, verbose_name="T004_repetido")
-    reclamado = models.BooleanField(default=False, verbose_name="T004_reclamado")
-
+   
     class Meta:
         verbose_name = "Consumo"
         verbose_name_plural = "Consumos"
@@ -95,6 +94,7 @@ class T005Sugerencias(models.Model):
     comentario = models.TextField(verbose_name="T005_comentario")
     calificacion = models.IntegerField(help_text="Puntaje de 1 a 5", verbose_name="T005_calificación")
     fecha = models.DateTimeField(default=timezone.now, verbose_name="T005_fecha")
+    fotoId = models.ImageField(upload_to='fotos_sugerencias/', null=True, blank=True, verbose_name="T005_fotoId")
 
     class Meta:
         verbose_name = "Sugerencia"

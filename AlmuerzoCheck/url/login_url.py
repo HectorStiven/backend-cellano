@@ -4,6 +4,7 @@ from AlmuerzoCheck.views import acudiente
 from AlmuerzoCheck.views import estudiantes
 from AlmuerzoCheck.views import menu
 from AlmuerzoCheck.views import WedcamId
+from AlmuerzoCheck.views import consumos
 
 urlpatterns = [
     path('usuarios/', login_views.ListarUsuario.as_view(), name='listar-usuarios'),
@@ -17,7 +18,7 @@ urlpatterns = [
     path('usuarios/actualizar_contrasena/', login_views.ActualizarPasswordUsuario.as_view(), name='actualizar-contrasena-usuario'),
 
     path('usuarios/correo_disponible/', login_views.EnviarCorreoElectronico.as_view(), name='verificar-correo-disponible'),
-
+    path('usuarios/enviar_correo/', login_views.EnviarCorreoElectronicoCodigo.as_view(), name='enviar-correo-electronico'),
 
     #CREAR ACUDIENTE PARA ESTUDIANTE
     path('usuarios/crear_acudiente/', acudiente.CrearAcudienteVista.as_view(), name='crear-acudiente-para-estudiante'),
@@ -36,5 +37,11 @@ urlpatterns = [
 
 
 
-  # path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
+  path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
+
+
+
+
+  path('consumos/crear/', consumos.CrearConsumoVista.as_view(), name='crear-consumo'),
+  path('consumos/estudiante/<int:estudiante_id>/', consumos.ListarConsumosPorEstudianteVista.as_view(), name='listar-consumos-por-estudiante'),
 ]

@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from AlmuerzoCheck.models import T003MenuDia
 from AlmuerzoCheck.serializer.Menu_Serializer import MenuSerializer
-
+import os  # ✅ <-- esta línea es la que faltaba
+from django.conf import settings  # ✅ <-- esta línea es la que faltaba
 
 
 class CrearMenuVista(generics.CreateAPIView):
@@ -89,20 +90,33 @@ class ListarMenuVista(generics.ListAPIView):
 
 
 
+
+
+
 class EliminarMenuVista(generics.DestroyAPIView):
     """
-    Vista para eliminar un menú del día por su ID.
+    Vista para eliminar un menú del día por su ID,
+    incluyendo la eliminación del archivo de imagen asociado.
     """
     queryset = T003MenuDia.objects.all()
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
         try:
-            menu = self.get_object()  # Busca el menú por ID en la URL
+            menu = self.get_object()  # Obtiene el menú por ID
+
+            # Eliminar la imagen asociada si existe
+            if menu.fotoId and menu.fotoId.name:
+                foto_path = os.path.join(settings.MEDIA_ROOT, menu.fotoId.name)
+                if os.path.isfile(foto_path):
+                    os.remove(foto_path)
+
+            # Eliminar el registro del menú
             menu.delete()
+
             return Response({
                 'success': True,
-                'detail': 'Menú eliminado correctamente.'
+                'detail': 'Menú y su imagen eliminados correctamente.'
             }, status=status.HTTP_200_OK)
 
         except Exception as e:

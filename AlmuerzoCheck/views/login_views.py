@@ -208,6 +208,12 @@ class ActualizarUsuario(generics.UpdateAPIView):
 
 
 
+
+
+
+
+
+
 class RecuperarContrasenaUsuarioCodigo(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
@@ -228,24 +234,89 @@ class RecuperarContrasenaUsuarioCodigo(generics.GenericAPIView):
                 'detail': 'No se encontró un usuario con ese nombre.'
             }, status=status.HTTP_404_NOT_FOUND)
 
-        # Generar código de 4 dígitos
+        # 🔢 Generar código de recuperación (4 dígitos)
         codigo_recuperacion = random.randint(1000, 9999)
 
-        # Guardar el código y la hora de expiración
+        # ⏰ Guardar código y expiración (2 horas)
         usuario.codigo_recuperacion = str(codigo_recuperacion)
         usuario.codigo_expira = timezone.now() + timedelta(hours=2)
         usuario.save()
 
         print(f"🔢 Código generado: {codigo_recuperacion} (expira a las {usuario.codigo_expira})")
 
-        # Aquí podrías enviar el correo con el código
+        # ✉️ Enviar correo electrónico con plantilla HTML
+        try:
+            template = "recuperar.html"
+            context = {
+                'Nombre_alerta': "Recuperación de contraseña",
+                'codigo': codigo_recuperacion
+            }
 
+            html_content = render_to_string(template, context)
+
+            email = EmailMessage(
+                subject="Código de recuperación de contraseña",
+                body=html_content,
+                to=[usuario.correo_electronico]  # se asume que el modelo tiene campo 'email'
+            )
+            email.content_subtype = 'html'
+            email.fail_silently = False
+            email.send()
+
+        except Exception as e:
+            return Response({
+                'success': False,
+                'detail': f'Error al enviar el correo: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # ✅ Respuesta exitosa
         return Response({
             'success': True,
             'detail': 'Código de recuperación generado y enviado correctamente.',
-            'codigo_generado': codigo_recuperacion,  # ⚠️ Solo para pruebas
-            'expira': usuario.codigo_expira
+            'expira': usuario.codigo_expira,
+            # ⚠️ El código solo se devuelve en desarrollo/pruebas, puedes quitarlo en producción
+            'codigo_generado': codigo_recuperacion
         }, status=status.HTTP_200_OK)
+
+
+# class RecuperarContrasenaUsuarioCodigo(generics.GenericAPIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request, *args, **kwargs):
+#         username = request.data.get('username')
+
+#         if not username:
+#             return Response({
+#                 'success': False,
+#                 'detail': 'El nombre de usuario es requerido.'
+#             }, status=status.HTTP_400_BAD_REQUEST)
+
+#         try:
+#             usuario = T007UsuariosSistema.objects.get(username=username)
+#         except T007UsuariosSistema.DoesNotExist:
+#             return Response({
+#                 'success': False,
+#                 'detail': 'No se encontró un usuario con ese nombre.'
+#             }, status=status.HTTP_404_NOT_FOUND)
+
+#         # Generar código de 4 dígitos
+#         codigo_recuperacion = random.randint(1000, 9999)
+
+#         # Guardar el código y la hora de expiración
+#         usuario.codigo_recuperacion = str(codigo_recuperacion)
+#         usuario.codigo_expira = timezone.now() + timedelta(hours=2)
+#         usuario.save()
+
+#         print(f"🔢 Código generado: {codigo_recuperacion} (expira a las {usuario.codigo_expira})")
+
+#         # Aquí podrías enviar el correo con el código
+
+#         return Response({
+#             'success': True,
+#             'detail': 'Código de recuperación generado y enviado correctamente.',
+#             'codigo_generado': codigo_recuperacion,  # ⚠️ Solo para pruebas
+#             'expira': usuario.codigo_expira
+#         }, status=status.HTTP_200_OK)
 
 
 class ActualizarPasswordUsuario(generics.GenericAPIView):
@@ -305,75 +376,100 @@ class ActualizarPasswordUsuario(generics.GenericAPIView):
 
 
 
-# class EnviarCorreoElectronico(generics.CreateAPIView):
-#     def post(self, request, *args, **kwargs):
-#         correo = request.data.get('correo')
-#         nombre = request.data.get('nombre')
-#         subject = request.data.get('asunto')
-#         mensaje = request.data.get('mensaje')
-
-#         if correo and nombre and subject:
-#             # Configuración del correo electrónico
-#             template = "alerta.html"
-            
-#             # Crear el contexto para la plantilla
-#             context = {
-#                 'nombre': nombre,
-#                 'mensaje': mensaje
-#             }
-
-#             # Renderizar la plantilla
-#             html_content = render_to_string(template, context)
-
-#             # Configuración del correo electrónico en formato HTML
-#             email = EmailMessage()
-#             email.subject = subject
-#             email.body = html_content
-#             email.to = [correo]
-#             email.content_subtype = 'html'
-
-#             try:
-#                 # Enviar el correo electrónico
-#                 email.fail_silently=False
-#                 email.send()
-#                 return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
-#             except Exception as e:
-#                 # Maneja cualquier error al enviar el correo
-#                 return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-#         else:
-#             # Maneja el caso en el que no se proporciona el correo, el nombre o el asunto
-#             return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)  
-        
-
-
-from threading import Thread
-from rest_framework.views import APIView
-
-def enviar_correo_smtp(correo, nombre, subject):
-    """
-    Función que envía el correo de forma lenta (SMTP).
-    Se ejecuta en segundo plano para no bloquear la petición HTTP.
-    """
-    mensaje = f"Hola {nombre},\n\n¡Te saludo cordialmente!"
-    email = EmailMessage(subject=subject, body=mensaje, to=[correo])
-    email.fail_silently = False
-    try:
-        email.send()
-    except Exception as e:
-        # Aquí puedes loguear el error
-        print(f"Error al enviar correo: {str(e)}")
-
-class EnviarCorreoElectronico(APIView):
-    def post(self, request):
+class EnviarCorreoElectronico(generics.CreateAPIView):
+    def post(self, request, *args, **kwargs):
         correo = request.data.get('correo')
         nombre = request.data.get('nombre')
         subject = request.data.get('asunto')
+        mensaje = request.data.get('mensaje')
 
-        if not (correo and nombre and subject):
-            return Response({'error': 'Faltan datos'}, status=400)
+        if correo and nombre and subject:
+            # Configuración del correo electrónico
+            template = "alerta.html"
+            
+            # Crear el contexto para la plantilla
+            context = {
+                'nombre': nombre,
+                'mensaje': mensaje
+            }
 
-        # Ejecuta en segundo plano
-        Thread(target=enviar_correo_smtp, args=(correo, nombre, subject)).start()
+            # Renderizar la plantilla
+            html_content = render_to_string(template, context)
 
-        # Devuelve respuesta inmediata
-        return Response({'mensaje': 'Correo programado para envío'}, status=200)
+            # Configuración del correo electrónico en formato HTML
+            email = EmailMessage()
+            email.subject = subject
+            email.body = html_content
+            email.to = [correo]
+            email.content_subtype = 'html'
+
+            try:
+                # Enviar el correo electrónico
+                email.fail_silently=False
+                email.send()
+                return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
+            except Exception as e:
+                # Maneja cualquier error al enviar el correo
+                return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            # Maneja el caso en el que no se proporciona el correo, el nombre o el asunto
+            return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)  
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class EnviarCorreoElectronicoCodigo(generics.CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        correo = request.data.get('correo')
+        nombre_alerta = request.data.get('nombre_alerta')  # antes era nombre
+        codigo = request.data.get('codigo')
+        asunto = request.data.get('asunto', 'Código de verificación')
+
+        # Validar campos requeridos
+        if not all([correo, nombre_alerta, codigo]):
+            return Response(
+                {'error': 'Por favor, proporciona correo, nombre_alerta y codigo.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Cargar la plantilla HTML
+        template = "recuperar.html"
+        context = {
+            'Nombre_alerta': nombre_alerta,
+            'codigo': codigo
+        }
+
+        # Renderizar contenido HTML
+        html_content = render_to_string(template, context)
+
+        # Configurar el correo
+        email = EmailMessage(
+            subject=asunto,
+            body=html_content,
+            to=[correo]
+        )
+        email.content_subtype = 'html'  # importante
+
+        try:
+            email.fail_silently = False
+            email.send()
+            return Response({'mensaje': 'Correo electrónico enviado correctamente'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f'Error al enviar el correo: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -5,6 +5,7 @@ from AlmuerzoCheck.views import estudiantes
 from AlmuerzoCheck.views import menu
 from AlmuerzoCheck.views import WedcamId
 from AlmuerzoCheck.views import consumos
+from AlmuerzoCheck.views import Sugerencias
 
 urlpatterns = [
     path('usuarios/', login_views.ListarUsuario.as_view(), name='listar-usuarios'),
@@ -44,4 +45,9 @@ urlpatterns = [
 
   path('consumos/crear/', consumos.CrearConsumoVista.as_view(), name='crear-consumo'),
   path('consumos/estudiante/<int:estudiante_id>/', consumos.ListarConsumosPorEstudianteVista.as_view(), name='listar-consumos-por-estudiante'),
+
+
+  path('sugerencias/crear/', Sugerencias.CrearSugerenciaVista.as_view(), name='crear-sugerencia'),
+  path('sugerencias/eliminar/<int:pk>/', Sugerencias.EliminarSugerenciaVista.as_view(), name='eliminar-sugerencia'),
+  path('sugerencias/listar/', Sugerencias.ListarSugerenciasVista.as_view(), name='listar-sugerencias'),
 ]

@@ -74,6 +74,59 @@ class ListarEstudiantesVista(generics.ListAPIView):
 
 
 
+
+
+class EditarEstudianteVista(generics.UpdateAPIView):
+    """
+    Vista para editar la información de un estudiante.
+    Acepta peticiones PUT o PATCH con el ID del estudiante en la URL.
+    Ejemplo: /api/estudiantes/editar/5/
+    """
+    queryset = T001Estudiantes.objects.all()
+    serializer_class = EstudianteSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # Permite subir archivos
+
+    def update(self, request, *args, **kwargs):
+        estudiante_id = kwargs.get("pk")
+        if not estudiante_id:
+            return Response({
+                "success": False,
+                "detail": "Debe proporcionar el ID del estudiante en la URL."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            estudiante = self.get_queryset().get(pk=estudiante_id)
+        except T001Estudiantes.DoesNotExist:
+            return Response({
+                "success": False,
+                "detail": f"No se encontró ningún estudiante con ID {estudiante_id}."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            serializer = self.get_serializer(estudiante, data=request.data, partial=True)  # partial=True permite actualizaciones parciales
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response({
+                "success": True,
+                "detail": "Estudiante actualizado correctamente",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({
+                "success": False,
+                "detail": "Error de validación al actualizar al estudiante",
+                "errors": e.detail
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                "success": False,
+                "detail": "Ocurrió un error interno al actualizar al estudiante",
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
 class ObtenerEstudianteInfo(generics.RetrieveAPIView):
     """
     Vista para obtener la información de un estudiante por su ID.

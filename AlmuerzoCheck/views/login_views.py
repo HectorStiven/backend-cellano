@@ -110,6 +110,63 @@ class CrearUsuario(generics.CreateAPIView):
 
 
 
+# class AutenticacionUsuario(generics.GenericAPIView):
+#     serializer_class = AlmuerzoCheckSerializerLogin
+#     permission_classes = [AllowAny]
+
+#     def post(self, request, *args, **kwargs):
+#         username = request.data.get('username')
+#         contrasena = request.data.get('password')
+
+#         # Validar campos vacíos
+#         if not username or not contrasena:
+#             return Response({
+#                 'success': False,
+#                 'detail': 'Usuario y contraseña son requeridos.'
+#             }, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Buscar usuario
+#         try:
+#             usuario = T007UsuariosSistema.objects.get(username=username)
+#         except T007UsuariosSistema.DoesNotExist:
+#             return Response({
+#                 'success': False,
+#                 'detail': 'Usuario no encontrado.'
+#             }, status=status.HTTP_404_NOT_FOUND)
+
+#         # Verificar contraseña
+#         if not check_password(contrasena, usuario.password):
+#             return Response({
+#                 'success': False,
+#                 'detail': 'Contraseña incorrecta.'
+#             }, status=status.HTTP_400_BAD_REQUEST)
+
+#         # ✅ Generar tokens JWT
+#         refresh = RefreshToken.for_user(usuario)
+#         access_token = refresh.access_token
+
+#         # ✅ Serializar usuario
+#         usuario_data = AlmuerzoCheckSerializerLogin(usuario).data
+
+#         # ✅ Concatenar información del estudiante (si existe)
+#         if usuario.estudiante:
+#             estudiante_data = EstudianteSerializer(usuario.estudiante).data
+#             usuario_data.update({
+#                 "estudiante_info": estudiante_data
+#             })
+#         else:
+#             usuario_data.update({
+#                 "estudiante_info": None
+#             })
+
+#         # ✅ Respuesta final
+#         return Response({
+#             'detail': 'Login exitoso.',
+#             'data': usuario_data,
+#             'token': str(access_token)
+#         }, status=status.HTTP_200_OK)
+    
+
 class AutenticacionUsuario(generics.GenericAPIView):
     serializer_class = AlmuerzoCheckSerializerLogin
     permission_classes = [AllowAny]
@@ -148,9 +205,12 @@ class AutenticacionUsuario(generics.GenericAPIView):
         # ✅ Serializar usuario
         usuario_data = AlmuerzoCheckSerializerLogin(usuario).data
 
-        # ✅ Concatenar información del estudiante (si existe)
+        # ✅ Concatenar información del estudiante con contexto request
         if usuario.estudiante:
-            estudiante_data = EstudianteSerializer(usuario.estudiante).data
+            estudiante_data = EstudianteSerializer(
+                usuario.estudiante,
+                context={'request': request}  # 🔹 Esto asegura que la URL de la foto sea completa
+            ).data
             usuario_data.update({
                 "estudiante_info": estudiante_data
             })
@@ -161,12 +221,11 @@ class AutenticacionUsuario(generics.GenericAPIView):
 
         # ✅ Respuesta final
         return Response({
+            'success': True,
             'detail': 'Login exitoso.',
             'data': usuario_data,
             'token': str(access_token)
         }, status=status.HTTP_200_OK)
-    
-
 
 
     

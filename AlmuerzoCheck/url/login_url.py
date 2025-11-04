@@ -30,6 +30,7 @@ urlpatterns = [
 
     path('usuarios/crear_estudiante/', estudiantes.CrearEstudianteVista.as_view(), name='crear-estudiante'),
     path('usuarios/listar_estudiantes/', estudiantes.ListarEstudiantesVista.as_view(), name='listar-estudiantes'),
+    path('usuarios/editar_estudiante/<int:pk>/', estudiantes.EditarEstudianteVista.as_view(), name='editar-estudiante'),
     path('usuarios/obtener_estudiante/<int:pk>/', estudiantes.ObtenerEstudianteInfo.as_view(), name='obtener-estudiante-info'),
     
    path('menu/crear/', menu.CrearMenuVista.as_view(), name='crear-menu'),
@@ -38,14 +39,14 @@ urlpatterns = [
 
 
 
-  path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
+  # path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
 
 
 
 
   path('consumos/crear/', consumos.CrearConsumoVista.as_view(), name='crear-consumo'),
   path('consumos/estudiante/<int:estudiante_id>/', consumos.ListarConsumosPorEstudianteVista.as_view(), name='listar-consumos-por-estudiante'),
-
+  path('consumos/listar_todos/', consumos.ListarConsumosPorFechaVista.as_view(), name='listar-todos-los-consumos'),
 
   path('sugerencias/crear/', Sugerencias.CrearSugerenciaVista.as_view(), name='crear-sugerencia'),
   path('sugerencias/eliminar/<int:pk>/', Sugerencias.EliminarSugerenciaVista.as_view(), name='eliminar-sugerencia'),

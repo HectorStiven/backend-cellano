@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Informe del almuerzo de {{nombre}} {{apellido}}</title>
+  </head>
+  <body style="margin:0; padding:0; background-color:#f5f6f7; font-family:Arial, sans-serif; color:#202124;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f5f6f7; padding:40px 0;">
+      <tr>
+        <td align="center">
+          <!-- Tarjeta principal -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px; background-color:#ffffff; border-radius:8px; box-shadow:0 1px 3px rgba(60,64,67,0.3);">
+            
+            <!-- Logo -->
+            <tr>
+              <td align="center" style="padding:24px 0 0 0;">
+                <img src="https://i.postimg.cc/GpBnVqzZ/393689017-801347725329174-3436577058213609822-n.jpg" alt="Logo" width="80" style="display:block; margin:0 auto 16px auto;" />
+              </td>
+            </tr>
+
+            <!-- Título -->
+            <tr>
+              <td style="padding:0 40px; text-align:center;">
+                <h2 style="font-size:22px; color:#202124; margin-bottom:8px;">Reporte del Almuerzo Escolar</h2>
+              </td>
+            </tr>
+
+            <!-- Mensaje principal -->
+            <tr>
+              <td style="padding:0 40px 10px 40px; text-align:center; color:#5f6368; font-size:16px; line-height:24px;">
+                Estimado padre/madre de <strong>{{nombre}} {{apellido}}</strong>,<br /><br />
+                Le informamos que su hijo(a) disfrutó el siguiente menú en el almuerzo del día <strong>{{fecha}}</strong> a las <strong>{{hora}}</strong>.
+              </td>
+            </tr>
+
+            <!-- Información del menú -->
+            <tr>
+              <td align="center" style="padding:20px 0;">
+                <div style="
+                  display:inline-block;
+                  background-color:#f1f3f4;
+                  border-radius:8px;
+                  padding:16px 32px;
+                  font-size:20px;
+                  font-weight:bold;
+                  color:#202124;
+                  border:1px solid #dadce0;
+                ">
+                  🍽️ {{menu}}
+                </div>
+              </td>
+            </tr>
+
+            <!-- Mensaje adicional -->
+            <tr>
+              <td style="padding:0 40px 30px 40px; text-align:center; color:#5f6368; font-size:14px; line-height:22px;">
+                Este registro hace parte del seguimiento diario de alimentación escolar.  
+                Si desea conocer más detalles o realizar observaciones, puede comunicarse con el área de bienestar estudiantil.
+              </td>
+            </tr>
+
+            <!-- Firma -->
+            <tr>
+              <td style="padding:0 40px 30px 40px; text-align:center; color:#202124; font-size:14px;">
+                <strong>Atentamente,</strong><br />
+                <span style="color:#5f6368;">Equipo de Alimentación Escolar</span>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Pie -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px; margin-top:20px;">
+            <tr>
+              <td style="text-align:center; font-size:11px; color:#80868b;">
+                © 2025 Programa de Alimentación Escolar. Todos los derechos reservados.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -29,7 +29,7 @@ class T001Estudiantes(models.Model):
     jornada = models.CharField(max_length=20, help_text="Mañana, Tarde o Nocturna", verbose_name="T001_jornada")
     año_ingreso = models.IntegerField(verbose_name="T001_año_ingreso")
     estado = models.BooleanField(default=True, verbose_name="T001_estado")
-    creditos = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="T001_créditos")
+    creditos = models.IntegerField(default=0, verbose_name="T001_créditos")
     creado_en = models.DateTimeField(default=timezone.now, verbose_name="T001_creado_en")
     fotoId = models.ImageField(upload_to='fotos_estudiantes/', null=True, blank=True, verbose_name="T001_fotoId")
 

@@ -3,10 +3,40 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from django.conf import settings
 
-from AlmuerzoCheck.models import T004Consumos
-from AlmuerzoCheck.serializer.Consumos_Serializer import ConsumosSerializer,ConsumoSerializer,EstudianteSinConsumoSerializer
+from AlmuerzoCheck.models import T004Consumos, T001Estudiantes, T003MenuDia, T008Acudientes
+from AlmuerzoCheck.serializer.Consumos_Serializer import ConsumosSerializer, ConsumoSerializer, EstudianteSinConsumoSerializer
 
+
+
+# class CrearConsumoVista(generics.CreateAPIView):
+#     queryset = T004Consumos.objects.all()
+#     serializer_class = ConsumosSerializer
+
+#     def create(self, request, *args, **kwargs):
+#         try:
+#             serializer = self.get_serializer(data=request.data)
+#             serializer.is_valid(raise_exception=True)
+#             serializer.save()
+
+#             return Response({
+#                 'success': True,
+#                 'detail': 'Consumo registrado correctamente',
+#                 'data': serializer.data
+#             }, status=status.HTTP_201_CREATED)
+
+#         except ValidationError as e:
+#             raise ValidationError(e.detail)
+#         except Exception as e:
+#             return Response({
+#                 'success': False,
+#                 'detail': 'Error al registrar el consumo',
+#                 'error': str(e)
+#             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
 class CrearConsumoVista(generics.CreateAPIView):
     queryset = T004Consumos.objects.all()
@@ -16,24 +46,54 @@ class CrearConsumoVista(generics.CreateAPIView):
         try:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            consumo = serializer.save()
+
+            # --- Datos del consumo creado ---
+            estudiante = consumo.estudiante
+            menu = consumo.menu
+            fecha = consumo.fecha.strftime("%Y-%m-%d")
+            hora = consumo.hora.strftime("%H:%M:%S")
+
+            # --- Buscar acudiente (si existe) ---
+            acudiente = T008Acudientes.objects.filter(estudiante=estudiante).first()
+            correo_destino = acudiente.correo if acudiente and acudiente.correo else estudiante.correo
+
+            if correo_destino:
+                # --- Preparar datos para la plantilla ---
+                context = {
+                    "nombre": estudiante.primer_nombre,
+                    "apellido": estudiante.primer_apellido,
+                    "fecha": fecha,
+                    "hora": hora,
+                    "menu": f"{menu.plato_principal} con {menu.acompanamiento}, {menu.bebida} y {menu.postre}"
+                }
+
+                # --- Renderizar HTML del correo ---
+                html_content = render_to_string("informe_consumo.html", context)
+
+                # --- Enviar correo ---
+                email = EmailMessage(
+                    subject=f"Informe del almuerzo de {estudiante.primer_nombre} {estudiante.primer_apellido}",
+                    body=html_content,
+                    from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@colegio.com"),
+                    to=[correo_destino],
+                )
+                email.content_subtype = "html"
+                email.fail_silently = False
+                email.send()
 
             return Response({
                 'success': True,
-                'detail': 'Consumo registrado correctamente',
+                'detail': 'Consumo registrado y correo enviado correctamente',
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
 
-        except ValidationError as e:
-            raise ValidationError(e.detail)
         except Exception as e:
             return Response({
                 'success': False,
-                'detail': 'Error al registrar el consumo',
+                'detail': 'Error al registrar el consumo o enviar el correo',
                 'error': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
 
 
 

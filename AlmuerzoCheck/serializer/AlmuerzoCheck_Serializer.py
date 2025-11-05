@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from AlmuerzoCheck.models import T007UsuariosSistema
+from AlmuerzoCheck.models import T007UsuariosSistema, T001Estudiantes
 
 
 # ✅ Serializer para crear usuarios
@@ -26,6 +26,25 @@ class AlmuerzoCheckSerializerListarAdmin(serializers.ModelSerializer):
     class Meta:
         model = T007UsuariosSistema
         fields = "__all__"
+class EstudianteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = T001Estudiantes
+        fields = '__all__'  # Trae todos los campos del estudiante
+
+class UsuarioSistemaSerializer(serializers.ModelSerializer):
+    estudiante_info = EstudianteSerializer(source='estudiante', read_only=True)
+
+    class Meta:
+        model = T007UsuariosSistema
+        fields = [
+            'id',
+            'username',
+            'rol',
+            'correo_electronico',
+            'creado_en',
+            'estudiante',
+            'estudiante_info',  # Campo anidado
+        ]
 
 class AlmuerzoCheckSerializerUpdate(serializers.ModelSerializer):
     class Meta:

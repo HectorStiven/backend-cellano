@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from AlmuerzoCheck.models import T007UsuariosSistema,T008Acudientes,T001Estudiantes
-from AlmuerzoCheck.serializer.AlmuerzoCheck_Serializer import AlmuerzoCheckSerializer,AlmuerzoCheckSerializerLogin,AlmuerzoCheckSerializerListarAdmin,AlmuerzoCheckSerializerUpdate 
+from AlmuerzoCheck.serializer.AlmuerzoCheck_Serializer import AlmuerzoCheckSerializer,AlmuerzoCheckSerializerLogin,AlmuerzoCheckSerializerListarAdmin,AlmuerzoCheckSerializerUpdate,UsuarioSistemaSerializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.permissions import AllowAny  
 from django.contrib.auth.hashers import make_password, check_password
@@ -19,7 +19,7 @@ from AlmuerzoCheck.serializer.Estudiantes_Serializer import EstudianteSerializer
 
 class ListarUsuario(generics.ListAPIView):
     queryset = T007UsuariosSistema.objects.all()
-    serializer_class = AlmuerzoCheckSerializerListarAdmin
+    serializer_class = UsuarioSistemaSerializer
     permission_classes = [IsAuthenticated]  # Asegúrate de que se requiera autenticación
 
     def get(self, request, *args, **kwargs):
@@ -30,6 +30,7 @@ class ListarUsuario(generics.ListAPIView):
             'detail': 'Lista de personas registradas',
             'data': serializer.data
         }, status=status.HTTP_200_OK)
+
 
 
 
@@ -63,109 +64,6 @@ class CrearUsuario(generics.CreateAPIView):
             'data': serializer.data
         }, status=status.HTTP_201_CREATED)
 
-
-# class AutenticacionUsuario(generics.GenericAPIView):
-#     serializer_class = AlmuerzoCheckSerializerLogin
-#     permission_classes = [AllowAny]  # Permitir a cualquier usuario autenticarse
-
-#     def post(self, request, *args, **kwargs):
-#         username = request.data.get('username')
-#         contrasena = request.data.get('password')
-
-#         # Validar campos vacíos
-#         if not username or not contrasena:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'Usuario y contraseña son requeridos.'
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Buscar usuario por número de usuario
-#         try:
-#             usuario = T007UsuariosSistema.objects.get(username=username)
-#         except T007UsuariosSistema.DoesNotExist:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'Usuario no encontrado.'
-#             }, status=status.HTTP_404_NOT_FOUND)
-
-#         # Comparar contraseñas usando check_password
-#         if check_password(contrasena, usuario.password):  # Asegúrate de que este campo es el correcto para la contraseña
-#             # Generar tokens JWT
-#             refresh = RefreshToken.for_user(usuario)
-#             access_token = refresh.access_token
-
-#             return Response({
-#                 'detail': 'Login exitoso.',
-#                 'data': AlmuerzoCheckSerializerLogin(usuario).data,
-#                 'token': str(access_token)
-#             }, status=status.HTTP_200_OK)
-#         else:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'Contraseña incorrecta.'
-#             }, status=status.HTTP_400_BAD_REQUEST)
-        
-
-
-
-
-
-# class AutenticacionUsuario(generics.GenericAPIView):
-#     serializer_class = AlmuerzoCheckSerializerLogin
-#     permission_classes = [AllowAny]
-
-#     def post(self, request, *args, **kwargs):
-#         username = request.data.get('username')
-#         contrasena = request.data.get('password')
-
-#         # Validar campos vacíos
-#         if not username or not contrasena:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'Usuario y contraseña son requeridos.'
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Buscar usuario
-#         try:
-#             usuario = T007UsuariosSistema.objects.get(username=username)
-#         except T007UsuariosSistema.DoesNotExist:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'Usuario no encontrado.'
-#             }, status=status.HTTP_404_NOT_FOUND)
-
-#         # Verificar contraseña
-#         if not check_password(contrasena, usuario.password):
-#             return Response({
-#                 'success': False,
-#                 'detail': 'Contraseña incorrecta.'
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#         # ✅ Generar tokens JWT
-#         refresh = RefreshToken.for_user(usuario)
-#         access_token = refresh.access_token
-
-#         # ✅ Serializar usuario
-#         usuario_data = AlmuerzoCheckSerializerLogin(usuario).data
-
-#         # ✅ Concatenar información del estudiante (si existe)
-#         if usuario.estudiante:
-#             estudiante_data = EstudianteSerializer(usuario.estudiante).data
-#             usuario_data.update({
-#                 "estudiante_info": estudiante_data
-#             })
-#         else:
-#             usuario_data.update({
-#                 "estudiante_info": None
-#             })
-
-#         # ✅ Respuesta final
-#         return Response({
-#             'detail': 'Login exitoso.',
-#             'data': usuario_data,
-#             'token': str(access_token)
-#         }, status=status.HTTP_200_OK)
-    
 
 class AutenticacionUsuario(generics.GenericAPIView):
     serializer_class = AlmuerzoCheckSerializerLogin
@@ -338,46 +236,6 @@ class RecuperarContrasenaUsuarioCodigo(generics.GenericAPIView):
         }, status=status.HTTP_200_OK)
 
 
-# class RecuperarContrasenaUsuarioCodigo(generics.GenericAPIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request, *args, **kwargs):
-#         username = request.data.get('username')
-
-#         if not username:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'El nombre de usuario es requerido.'
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#         try:
-#             usuario = T007UsuariosSistema.objects.get(username=username)
-#         except T007UsuariosSistema.DoesNotExist:
-#             return Response({
-#                 'success': False,
-#                 'detail': 'No se encontró un usuario con ese nombre.'
-#             }, status=status.HTTP_404_NOT_FOUND)
-
-#         # Generar código de 4 dígitos
-#         codigo_recuperacion = random.randint(1000, 9999)
-
-#         # Guardar el código y la hora de expiración
-#         usuario.codigo_recuperacion = str(codigo_recuperacion)
-#         usuario.codigo_expira = timezone.now() + timedelta(hours=2)
-#         usuario.save()
-
-#         print(f"🔢 Código generado: {codigo_recuperacion} (expira a las {usuario.codigo_expira})")
-
-#         # Aquí podrías enviar el correo con el código
-
-#         return Response({
-#             'success': True,
-#             'detail': 'Código de recuperación generado y enviado correctamente.',
-#             'codigo_generado': codigo_recuperacion,  # ⚠️ Solo para pruebas
-#             'expira': usuario.codigo_expira
-#         }, status=status.HTTP_200_OK)
-
-
 class ActualizarPasswordUsuario(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
@@ -429,12 +287,6 @@ class ActualizarPasswordUsuario(generics.GenericAPIView):
 
 
 
-
-
-
-
-
-
 class EnviarCorreoElectronico(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         correo = request.data.get('correo')
@@ -474,17 +326,6 @@ class EnviarCorreoElectronico(generics.CreateAPIView):
             # Maneja el caso en el que no se proporciona el correo, el nombre o el asunto
             return Response({'error': 'Por favor, proporciona el correo, el nombre y el asunto.'}, status=status.HTTP_400_BAD_REQUEST)  
         
-
-
-
-
-
-
-
-
-
-
-
 
 
 

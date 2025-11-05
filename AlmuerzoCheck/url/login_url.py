@@ -13,7 +13,6 @@ urlpatterns = [
     path('usuarios/autenticacion/', login_views.AutenticacionUsuario.as_view(), name='autenticacion_usuario'),
     path('usuarios/actualizar/<int:pk>/', login_views.ActualizarUsuario.as_view(), name='actualizar-usuario'),  #solo admin
 
-
     # path('usuarios/eliminar/<int:pk>/', login_views.EliminarUsuario.as_view(), name='eliminar-usuario'),  pendiente tiene es que desactivarlo no eliminarlo
     path('usuarios/recuperar_contrasena/', login_views.RecuperarContrasenaUsuarioCodigo.as_view(), name='recuperar-contrasena-usuario'),
     path('usuarios/actualizar_contrasena/', login_views.ActualizarPasswordUsuario.as_view(), name='actualizar-contrasena-usuario'),
@@ -39,8 +38,8 @@ urlpatterns = [
 
 
 
-  # path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
-
+  path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
+ path('webcam/manual/', WedcamId.BuscarEstudianteManual.as_view(), name='wedcam-test'),
 
 
 

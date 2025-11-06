@@ -6,7 +6,7 @@ from AlmuerzoCheck.views import menu
 from AlmuerzoCheck.views import WedcamId
 from AlmuerzoCheck.views import consumos
 from AlmuerzoCheck.views import Sugerencias
-
+from AlmuerzoCheck.views import Pago
 urlpatterns = [
     path('usuarios/', login_views.ListarUsuario.as_view(), name='listar-usuarios'),
     path('usuarios/crear/', login_views.CrearUsuario.as_view(), name='crear-usuario'),
@@ -38,8 +38,8 @@ urlpatterns = [
 
 
 
-  path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
- path('webcam/manual/', WedcamId.BuscarEstudianteManual.as_view(), name='wedcam-test'),
+  # path('webcam/service/', WedcamId.WedCamService.as_view(), name='wedcam-service'),
+  path('webcam/manual/', WedcamId.BuscarEstudianteManual.as_view(), name='wedcam-test'),
 
 
 
@@ -50,4 +50,9 @@ urlpatterns = [
   path('sugerencias/crear/', Sugerencias.CrearSugerenciaVista.as_view(), name='crear-sugerencia'),
   path('sugerencias/eliminar/<int:pk>/', Sugerencias.EliminarSugerenciaVista.as_view(), name='eliminar-sugerencia'),
   path('sugerencias/listar/', Sugerencias.ListarSugerenciasVista.as_view(), name='listar-sugerencias'),
+
+
+  path('pagos/crear/', Pago.CrearPagoVista.as_view(), name='crear-pago'),
+  path('pagos/listar/', Pago.ListarPagosPorMesAnioVista.as_view(), name='listar-pagos'),
+
 ]

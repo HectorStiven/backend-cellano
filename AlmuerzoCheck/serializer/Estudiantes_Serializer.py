@@ -25,5 +25,6 @@ class EstudianteAllSerializer(serializers.ModelSerializer):
             'grado',
             'fotoId',
             'genero',
-            'estado'
+            'estado',
+            'creditos'
         ]

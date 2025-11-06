@@ -1,6 +1,7 @@
 from AlmuerzoCheck.models import T005Sugerencias
 from rest_framework import serializers
 from AlmuerzoCheck.serializer.Estudiantes_Serializer import EstudianteSerializer
+
 class SugerenciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = T005Sugerencias

@@ -46,10 +46,8 @@ class T002Pagos(models.Model):
     estudiante = models.ForeignKey(T001Estudiantes, on_delete=models.CASCADE, verbose_name="T002_estudiante")
     mes = models.IntegerField(help_text="1=Enero, 2=Febrero, etc.", verbose_name="T002_mes")
     anio = models.IntegerField(verbose_name="T002_año")
-    valor_pagado = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="T002_valor_pagado")
     valor_mensualidad = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="T002_valor_mensualidad")
     fecha_pago = models.DateField(verbose_name="T002_fecha_pago")
-    observacion = models.TextField(null=True, blank=True, verbose_name="T002_observación")
 
     class Meta:
         verbose_name = "Pago"

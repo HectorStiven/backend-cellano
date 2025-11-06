@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.conf import settings
 from AlmuerzoCheck.models import T001Estudiantes
-import numpy as np
+# import numpy as np
 
 import os
 # import face_recognition

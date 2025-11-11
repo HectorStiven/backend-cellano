@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'rest_framework',
     'AlmuerzoCheck',
+    'rest_framework',
     'rest_framework_simplejwt',
 ]
 

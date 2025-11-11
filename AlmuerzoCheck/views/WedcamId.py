@@ -3,10 +3,25 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.conf import settings
 from AlmuerzoCheck.models import T001Estudiantes
+from django.utils import timezone
+from AlmuerzoCheck.views.consumos import CrearConsumoVista
+
+
+
 # import numpy as np
 
-import os
+# import os
+
 # import face_recognition
+
+
+
+from rest_framework.test import APIRequestFactory
+
+
+
+
+
 
 # class WedCamService(generics.GenericAPIView):
 #     permission_classes = [AllowAny]
@@ -21,7 +36,7 @@ import os
 #                     "detail": "Debe enviar una foto."
 #                 }, status=status.HTTP_400_BAD_REQUEST)
 
-#             # Cargar la foto enviada y obtener su codificación
+#             # --- Cargar la imagen y obtener encoding ---
 #             foto_enviada = face_recognition.load_image_file(foto_subida)
 #             encodings_enviada = face_recognition.face_encodings(foto_enviada)
 
@@ -33,7 +48,7 @@ import os
 
 #             encoding_enviada = encodings_enviada[0]
 
-#             # Buscar coincidencia con todos los estudiantes que tengan foto registrada
+#             # --- Buscar coincidencias ---
 #             estudiantes = T001Estudiantes.objects.exclude(fotoId__isnull=True).exclude(fotoId__exact="")
 #             mejor_match = None
 #             mejor_distancia = 1.0
@@ -49,15 +64,32 @@ import os
 #                 if not encodings_guardada:
 #                     continue
 
-#                 encoding_guardada = encodings_guardada[0]
-#                 distancia = np.linalg.norm(encoding_enviada - encoding_guardada)
-
+#                 distancia = np.linalg.norm(encoding_enviada - encodings_guardada[0])
 #                 if distancia < 0.6 and distancia < mejor_distancia:
 #                     mejor_match = estudiante
 #                     mejor_distancia = distancia
 
-#             # Resultado final
+#             # ✅ Si se encontró el estudiante
 #             if mejor_match:
+#                 print("Créditos del estudiante:", mejor_match.creditos)
+
+#                 if mejor_match.creditos > 0:
+#                     data_consumo = {
+#                         "estudiante": mejor_match.id,
+#                         "fecha": timezone.now().date(),
+#                         "hora": timezone.now().time()
+#                     }
+#                     print("Datos consumo creado:", data_consumo)
+
+#                     # ✅ Crear un request simulado y llamar a la vista CrearConsumoVista
+#                     factory = APIRequestFactory()
+#                     fake_request = factory.post('/consumos/crear/', data=data_consumo, format='json')
+
+#                     response_consumo = CrearConsumoVista.as_view()(fake_request)
+
+#                     print("Respuesta CrearConsumoVista:", response_consumo.status_code)
+#                     print("Contenido:", getattr(response_consumo, 'data', 'Sin contenido'))
+
 #                 return Response({
 #                     "success": True,
 #                     "detail": "Rostro reconocido correctamente.",
@@ -84,17 +116,20 @@ import os
 #                         "fotoId": request.build_absolute_uri(mejor_match.fotoId.url) if mejor_match.fotoId else None
 #                     }
 #                 }, status=status.HTTP_200_OK)
-#             else:
-#                 return Response({
-#                     "success": False,
-#                     "detail": "No se encontró coincidencia con ningún rostro registrado."
-#                 }, status=status.HTTP_404_NOT_FOUND)
+
+#             # ❌ No hubo coincidencia
+#             return Response({
+#                 "success": False,
+#                 "detail": "No se encontró coincidencia con ningún rostro registrado."
+#             }, status=status.HTTP_404_NOT_FOUND)
 
 #         except Exception as e:
 #             return Response({
 #                 "success": False,
 #                 "detail": f"Error interno: {str(e)}"
 #             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 

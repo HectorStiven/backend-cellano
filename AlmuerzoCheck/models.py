@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin , BaseUserManager
 
 
 # ============================================================
@@ -9,6 +9,22 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 # Descripción: Gestión de pagos, consumos, menús, inventario,
 # sugerencias, acudientes y reportes diarios de almuerzos.
 # ============================================================
+
+
+class UsuarioManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('El usuario debe tener un nombre de usuario')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(username, password, **extra_fields)
+    
 
 
 class T001Estudiantes(models.Model):
@@ -24,7 +40,8 @@ class T001Estudiantes(models.Model):
     direccion = models.CharField(max_length=200, verbose_name="T001_dirección")
     telefono = models.CharField(max_length=15, verbose_name="T001_teléfono")
     correo = models.EmailField(null=True, blank=True, verbose_name="T001_correo_electrónico")
-    grado = models.CharField(max_length=20, verbose_name="T001_grado")
+    # grado = models.CharField(max_length=20, verbose_name="T001_grado")
+    grado = models.ForeignKey('T009Grados', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="T001_grado")
     grupo = models.CharField(max_length=10, verbose_name="T001_grupo")
     jornada = models.CharField(max_length=20, help_text="Mañana, Tarde o Nocturna", verbose_name="T001_jornada")
     año_ingreso = models.IntegerField(verbose_name="T001_año_ingreso")
@@ -76,7 +93,7 @@ class T003MenuDia(models.Model):
 
 class T004Consumos(models.Model):
     estudiante = models.ForeignKey(T001Estudiantes, on_delete=models.CASCADE, verbose_name="T004_estudiante")
-    menu = models.ForeignKey(T003MenuDia, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="T004_menú")
+    # menu = models.ForeignKey(T003MenuDia, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="T004_menú")
     fecha = models.DateField(default=timezone.now, verbose_name="T004_fecha")
     hora = models.TimeField(default=timezone.now, verbose_name="T004_hora")
    
@@ -160,3 +177,16 @@ class T008Acudientes(models.Model):
         verbose_name_plural = "Acudientes"
         db_table = "T008Acudientes"
 
+
+
+class T009Grados(models.Model):
+    nombre_grado = models.CharField(max_length=50, unique=True, verbose_name="T009_nombre_grado")
+    salon = models.CharField(max_length=20, verbose_name="T009_salón")
+    valor = models.IntegerField(verbose_name="T009_valor") 
+    class Meta:
+        verbose_name = "Grado"
+        verbose_name_plural = "Grados"
+        db_table = "T009Grados"
+
+    def __str__(self):
+        return self.nombre_grado

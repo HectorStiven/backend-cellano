@@ -50,7 +50,6 @@ class CrearConsumoVista(generics.CreateAPIView):
 
             # --- Datos del consumo creado ---
             estudiante = consumo.estudiante
-            menu = consumo.menu
             fecha = consumo.fecha.strftime("%Y-%m-%d")
             hora = consumo.hora.strftime("%H:%M:%S")
 
@@ -64,8 +63,7 @@ class CrearConsumoVista(generics.CreateAPIView):
                     "nombre": estudiante.primer_nombre,
                     "apellido": estudiante.primer_apellido,
                     "fecha": fecha,
-                    "hora": hora,
-                    "menu": f"{menu.plato_principal} con {menu.acompanamiento}, {menu.bebida} y {menu.postre}"
+                    "hora": hora
                 }
 
                 # --- Renderizar HTML del correo ---

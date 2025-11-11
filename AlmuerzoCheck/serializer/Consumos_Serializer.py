@@ -11,7 +11,6 @@ class ConsumosSerializer(serializers.ModelSerializer):
 
 
 class ConsumoSerializer(serializers.ModelSerializer):
-    plato_principal = serializers.CharField(source='menu.plato_principal', read_only=True)
     identificacion = serializers.CharField(source='estudiante.identificacion', read_only=True)
     fotoId = serializers.ImageField(source='estudiante.fotoId', read_only=True)
     primer_nombre = serializers.CharField(source='estudiante.primer_nombre', read_only=True)
@@ -22,8 +21,6 @@ class ConsumoSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'estudiante',
-            'menu',
-            'plato_principal',  # 👈 nombre del plato del menú
             'fecha',
             'hora',
             'identificacion',  # 👈 identificación del estudiante
